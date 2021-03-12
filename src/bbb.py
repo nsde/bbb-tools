@@ -1,8 +1,34 @@
 import requests
 import webbrowser
 
+def getconference(url):
+    """Get data about a conference."""
+
+    try:
+        data = requests.get(url).text
+    except:
+        return False
+
+    conference = {}
+    conference["id"] = url.split("://")[1].split("/")[2]
+    conference["host"] = url.split("://")[1].split("/")[0].replace('" ', "")
+    conference["host_id"] = url.split("://")[1].split("/")[2].split("-")[0]
+    conference["room"] = " ".join(data.split("<title>")[1].split("</title>")[0].split()[1:])
+    conference["owner"] = " ".join(data.split(")</h5>")[0].split("block\">")[1].split()[:-1])
+    conference["random_token"] = data.split("<meta name=\"csrf-token\" content=\"")[1].split("\" />")[0]
+
+    return conference
+
+def getsession(url):
+    """Get information about a session."""
+    session = {}
+    session["token"] = url.split("sessionToken=")[1].split("&")[0]
+    session["server"] = url.split("//bbb")[1].split(".")[0]
+    session["valid_base_url"] = "200" in str(requests.get(url)) 
+    return session
+
 def getslides(url):
-    """Returns valid URLs for all avaiable presentaion slides"""
+    """Returns valid URLs for all avaiable presentation slides."""
     urls = []
     url_prefix = url.split("/svg/")[0]
     for slide in range(1, 100):
@@ -11,6 +37,10 @@ def getslides(url):
             urls.append(url)
         else:
             return urls
-    
+  
 if __name__ == "__main__":
-    print(getslides("https://bbb.talpaworld.de/bigbluebutton/presentation/18941bfbd282e5bdf312fe4f33aa8fb5bee76f4f-1615483623193/18941bfbd282e5bdf312fe4f33aa8fb5bee76f4f-1615483623193/54df4f06e75a79796760c3c082d05eb12846bec3-1615483641373/svg/1"))
+    print(getslides("https://bbb.talpaworld.de/bigbluebutton/presentation/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/svg/000"))
+    print()
+    print(getsession("https://bbb3.bbb-meeting.de/html5client/join?sessionToken=XXXXXXXXXXXXXXXX"))
+    print()
+    print(getconference("https://bbb3.bbb-meeting.de.de/b/XXX-XXX-XXX-XXX"))
