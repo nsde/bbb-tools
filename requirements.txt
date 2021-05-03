@@ -1,1 +1,5 @@
+svglib
+Pillow
+urllib
 requests
+reportlab
