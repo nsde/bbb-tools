@@ -2,4 +2,5 @@ svglib
 Pillow
 urllib
 requests
+pyperclip
 reportlab

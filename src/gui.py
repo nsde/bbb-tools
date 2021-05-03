@@ -1,9 +1,12 @@
 import bbb
 
 import os
+import sys
 import urllib
 import tkinter
 import requests
+import pyperclip
+import webbrowser
 
 from PIL import Image, ImageTk
 from svglib.svglib import svg2rlg
@@ -47,20 +50,56 @@ url_input.pack()
 def start(info_widget):
     start_button.destroy()
     url = url_input.get()
+    url = '/'.join(url.split('/')[:-1]) + '/1'
+    print(url)
     globals()['url_base'] = url
     url_input.destroy()
-    slide_num = len(bbb.getslides(url))
-    globals()['slide_num'] = int(url.split('/')[-1])
+    info_widget.config(text='Loading...')
+    try:
+        slide_num = len(bbb.getslides(url))
+        globals()['slide_num'] = int(url.split('/')[-1])
+    except:
+        info_widget.config(text='Invalid URL!\nPlease restart the program.')
+        return
     globals()['slide_count'] = slide_num
 
-    slide_img = tkinter.Label(win)
+    def view_image():
+        os.system('start temp.png') # this is so easy because the current slide is always saved as the same name 
+
+    slide_img = tkinter.Button(win, command=view_image, bg=gettheme()['bg'])
     slide_img.pack()
+
+    def browse():
+        os.system('start ' + globals()['slide_url'])
+    
+    def copyurl():
+        pyperclip.copy(globals()['slide_url'])
+
+    def close():
+        sys.exit(0)
+
+    m = tkinter.Menu(win, tearoff=0)
+    m.add_command(label='View in browser', command=browse)
+    m.add_command(label='Copy URL')
+    m.add_separator()
+    m.add_command(label='Exit', command=close)
+    
+    def ctxmenu_popup(event):
+        try:
+            m.tk_popup(event.x_root, event.y_root)
+        finally:
+            m.grab_release()
+    
+    slide_img.bind('<Button-3>', ctxmenu_popup)
+
     #globals()['img_widget'] = slide_img
 
     def load(info_widget, img_widget):
+        info_button.destroy()
         #globals()['urlinfo_widget'] = globals()['urlinfo_widget'].config(text='Slide ' + url.split('/')[-1] + '/' + str(globals()['slidenum']))
         url = globals()['url_base']
         url = '/'.join(url.split('/')[:-1]) + '/' + str(globals()['slide_num'])
+        globals()['slide_url'] = url
         info_widget.config(text='Slide ' + str(globals()['slide_num']) + '/' + str(globals()['slide_count']))
 
         img_data = urllib.request.urlopen(url.replace('svg', 'png'))
@@ -136,4 +175,21 @@ start_button = tkinter.Button(win,
 )
 
 start_button.pack()
+
+def info():
+    webbrowser.open('https://github.com/nsde/bbb')
+
+info_button = tkinter.Button(win,
+    fg=gettheme()['fg'],
+    bg=gettheme()['bg'],
+    font=(gettheme()['font'], 24),
+    text='Info page',
+    relief='flat',
+    command=info,
+    activebackground=gettheme()['light'],
+    activeforeground=gettheme()['fg']
+)
+
+info_button.pack()
+
 win.mainloop()

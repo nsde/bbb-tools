@@ -31,6 +31,12 @@ def getslides(url: str):
     '''Returns valid URLs for all avaiable presentation slides.'''
     urls = []
     url_prefix = url.split('/svg/')[0]
+    try:
+        requests.get(url)
+    except:
+        raise Exception
+        return
+
     for slide in range(1, 100):
         url = url_prefix + '/svg/' + str(slide)
         if '200' in str(requests.get(url)):
@@ -40,8 +46,7 @@ def getslides(url: str):
   
 if __name__ == '__main__':
     print(getslides('https://bbb.talpaworld.de/bigbluebutton/presentation/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-0000000000000/svg/000'))
-    print(getslides('https://bbb6.bbb-meeting.de/bigbluebutton/presentation/b59875189e90f76f1c0bb49510b248ef4e1ce3a1-1620021519392/b59875189e90f76f1c0bb49510b248ef4e1ce3a1-1620021519392/a626b621a9e4f6092a7360dd2d14aac3b8f84da6-1620022044128/svg/5'))
     print()
-    print(getsession('https://bbb3.bbb-meeting.de/html5client/join?sessionToken=XXXXXXXXXXXXXXXX'))
+    print(getsession('https://bbb.bbb-meeting.de/html5client/join?sessionToken=XXXXXXXXXXXXXXXX'))
     print()
-    print(getconference('https://bbb3.bbb-meeting.de.de/b/XXX-XXX-XXX-XXX'))
+    print(getconference('https://bbb.bbb-meeting.de.de/b/XXX-XXX-XXX-XXX'))
