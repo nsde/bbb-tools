@@ -132,8 +132,10 @@ def start(info_widget):
         url = '/'.join(url.split('/')[:-1]) + '/' + str(globals()['slide_num'])
         globals()['slide_url'] = url
         info_widget.config(text='Slide ' + str(globals()['slide_num']) + '/' + str(globals()['slide_count']))
+        url = url.replace('svg', 'png')
 
-        img_data = urllib.request.urlopen(url.replace('svg', 'png'))
+        print(url)
+        img_data = urllib.request.urlopen(url)
         with open('temp.png', 'wb') as f:
             f.write(img_data.read())
         
@@ -201,6 +203,26 @@ start_button = tkinter.Button(win,
     text='Start',
     relief='flat',
     command=lambda: start(url_info),
+    activebackground=gettheme()['light'],
+    activeforeground=gettheme()['fg']
+)
+
+start_button.pack()
+
+def startweb():
+    url = url_input.get()
+    os.system('start https://res.cloudinary.com/teepublic/image/private/s--K_rZrNsA--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1498165258/production/designs/1687129_1.jpg')
+    urls = bbb.getslides(url=url)
+    for u in urls:
+        webbrowser.open(u)
+
+start_button = tkinter.Button(win,
+    fg=gettheme()['fg'],
+    bg=gettheme()['bg'],
+    font=(gettheme()['font'], 24),
+    text='Open in web',
+    relief='flat',
+    command=lambda: startweb(),
     activebackground=gettheme()['light'],
     activeforeground=gettheme()['fg']
 )
