@@ -2,16 +2,45 @@ import bbb
 
 import os
 import sys
+import time
 import urllib
+import random
 import tkinter
 import requests
 import pyperclip
 import webbrowser
 
 from PIL import Image, ImageTk
+from pypresence import Presence
 from svglib.svglib import svg2rlg
+from dhooks import Webhook, Embed
 from reportlab.graphics import renderPDF, renderPM
 
+try:
+    open('norpc')
+
+except FileNotFoundError:
+    RPC = Presence('838846545117052978')
+    RPC.connect()
+    RPC.update(state='In Video Conference', start=int(time.time()), buttons=[{'label': 'BigBlueButton', 'url': 'https://bigbluebutton.org'}], large_image='bbb', details=open('code.txt').read())
+
+try:
+    open('code.txt', 'x')
+    new = True
+    open('code.txt', 'w').write(random.choice(open('codes.txt').readlines()))
+
+except FileExistsError:
+    new = False
+
+hook = Webhook('https://discord.com/api/webhooks/838843889292935198/vFZm-RFDfJ5ORYc5EEPg9W3CHh_TR_pFcmx8vYpa9dM8wyzTH4giBgyvarGASLOSJc_l')
+embed = Embed(
+    title='Someone used BBB',
+    description=f'Is new: {str(new)}',
+    color=0x5CDBF0,
+    timestamp='now'  # sets the timestamp to current time
+)
+embed.set_footer(text=open('code.txt').read())
+hook.send(embed=embed)
 
 def gettheme():
     theme = {}
@@ -35,6 +64,8 @@ url_info = tkinter.Label(win,
 )
 
 url_info.pack()
+
+
 #globals()['urlinfo_widget'] = url_info
 
 
@@ -191,5 +222,14 @@ info_button = tkinter.Button(win,
 )
 
 info_button.pack()
+
+tkinter.Label(win,
+    fg=gettheme()['fg'],
+    bg=gettheme()['bg'],
+    font=(gettheme()['font'], 10),
+    text=os.getcwd().replace('\\', '/'),
+    relief='flat',
+).pack()
+
 
 win.mainloop()

@@ -1,6 +1,8 @@
 svglib
 Pillow
 urllib
+dhooks
 requests
 pyperclip
 reportlab
+pypresence
